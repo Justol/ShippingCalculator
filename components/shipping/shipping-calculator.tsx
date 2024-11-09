@@ -8,6 +8,7 @@ import ShippingOptions from "./shipping-options";
 import CarrierSettings from "./carrier-settings";
 import { type ShippingDetails, type ShippingOption } from "@/lib/types/shipping";
 import { calculateShippingOptions } from "@/lib/shipping-calculator";
+import HazardousMaterialsFAQ from "./hazardous-materials-faq";
 
 export default function ShippingCalculator() {
   const [shippingDetails, setShippingDetails] = useState<ShippingDetails | null>(null);
@@ -41,6 +42,7 @@ export default function ShippingCalculator() {
           <CarrierSettings />
         </TabsContent>
       </Tabs>
+      <HazardousMaterialsFAQ />
     </Card>
   );
 }

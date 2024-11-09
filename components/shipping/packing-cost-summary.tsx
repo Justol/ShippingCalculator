@@ -25,6 +25,13 @@ const PACKAGING_COSTS = {
   envelope: { price: 1, label: "Shipping Envelope" },
 };
 
+const LABOR_COSTS = {
+  regular: { price: 0, label: "Regular Packaging" },
+  fragile: { price: 50, label: "Fragile Items" },
+  veryFragile: { price: 150, label: "Very Fragile Items" },
+  custom: { price: 100, label: "Custom Packaging" },
+};
+
 interface PackingCostSummaryProps {
   packingDetails: PackingDetails;
 }
@@ -38,6 +45,16 @@ export default function PackingCostSummary({
 
   let totalCost = 0;
   const costBreakdown: { label: string; price: number }[] = [];
+
+  // Add labor cost based on complexity
+  if (packingDetails.complexity && LABOR_COSTS[packingDetails.complexity]) {
+    const laborCost = LABOR_COSTS[packingDetails.complexity];
+    totalCost += laborCost.price;
+    costBreakdown.push({
+      label: laborCost.label,
+      price: laborCost.price,
+    });
+  }
 
   // Add box cost if selected
   if (packingDetails.boxSize && BOX_COSTS[packingDetails.boxSize]) {

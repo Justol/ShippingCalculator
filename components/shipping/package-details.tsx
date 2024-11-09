@@ -368,6 +368,33 @@ export default function PackageDetails({ onCalculate }: PackageDetailsProps) {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="packing.complexity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Packaging Complexity</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select complexity" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="regular">Regular Packaging</SelectItem>
+                        <SelectItem value="fragile">Fragile Items</SelectItem>
+                        <SelectItem value="veryFragile">Very Fragile Items</SelectItem>
+                        <SelectItem value="custom">Custom Packaging</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <PackingCostSummary packingDetails={packingDetails} />
             </div>
           )}

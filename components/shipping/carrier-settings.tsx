@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,12 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
@@ -47,7 +40,7 @@ const carrierFormSchema = z.object({
   services: z.array(z.string()),
 });
 
-const availableServices = {
+const availableServices: Record<string, { id: string; name: string }[]> = {
   ups: [
     { id: "ground", name: "Ground" },
     { id: "3day", name: "3-Day Select" },
@@ -73,8 +66,6 @@ const availableServices = {
 };
 
 export default function CarrierSettings() {
-  const [expandedCarrier, setExpandedCarrier] = useState<string | undefined>();
-
   const carriers = [
     {
       id: "ups",
@@ -123,8 +114,6 @@ export default function CarrierSettings() {
 
   const onSubmit = async (data: z.infer<typeof carrierFormSchema>) => {
     try {
-      // Here you would typically save the carrier configuration
-      // and test the connection with the carrier's API
       toast.success("Carrier settings saved successfully");
       console.log(data);
     } catch (error) {
@@ -145,296 +134,272 @@ export default function CarrierSettings() {
 
         <Separator />
 
-        <Accordion
-          type="single"
-          collapsible
-          value={expandedCarrier}
-          onValueChange={setExpandedCarrier}
-        >
-          {carriers.map((carrier) => (
-            <AccordionItem key={carrier.id} value={carrier.id}>
-              <AccordionTrigger>
-                <div className="flex items-center gap-4">
-                  <img
-                    src={carrier.logo}
-                    alt={`${carrier.name} logo`}
-                    className="h-8 w-auto"
-                  />
-                  <span>{carrier.name}</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <Card className="p-6">
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-6"
-                    >
-                      <FormField
-                        control={form.control}
-                        name="enabled"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">
-                                Enable {carrier.name}
-                              </FormLabel>
-                              <FormDescription>
-                                Activate {carrier.name} shipping services
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="environment"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Environment</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select environment" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="test">Test/Sandbox</SelectItem>
-                                <SelectItem value="production">
-                                  Production
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              Choose between test and production environments
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-
-                      {carrier.requiresOAuth && (
-                        <>
-                          <div className="grid gap-4 md:grid-cols-2">
-                            <FormField
-                              control={form.control}
-                              name="clientId"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Client ID</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder="Enter client ID"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            <FormField
-                              control={form.control}
-                              name="clientSecret"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Client Secret</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      type="password"
-                                      placeholder="Enter client secret"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      {!carrier.requiresOAuth && (
-                        <FormField
-                          control={form.control}
-                          name="apiKey"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>API Key</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="Enter API key"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <FormField
-                          control={form.control}
-                          name="accountNumber"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Account Number</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter account number"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="cutoffTime"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Shipping Cutoff Time</FormLabel>
-                              <FormControl>
-                                <Input type="time" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+        {carriers.map((carrier) => (
+          <Card key={carrier.id} className="p-6 mb-4">
+            <div className="flex items-center gap-4 mb-4">
+              <img
+                src={carrier.logo}
+                alt={`${carrier.name} logo`}
+                className="h-8 w-auto"
+              />
+              <span className="text-lg font-semibold">{carrier.name}</span>
+            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="enabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Enable {carrier.name}
+                        </FormLabel>
+                        <FormDescription>
+                          Activate {carrier.name} shipping services
+                        </FormDescription>
                       </div>
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
-                      <FormField
-                        control={form.control}
-                        name="pickupEnabled"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">
-                                Enable Automatic Pickup
-                              </FormLabel>
-                              <FormDescription>
-                                Schedule automatic daily pickups
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+                <FormField
+                  control={form.control}
+                  name="environment"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Environment</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select environment" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="test">Test/Sandbox</SelectItem>
+                          <SelectItem value="production">Production</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Choose between test and production environments
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
 
-                      {form.watch("pickupEnabled") && (
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <FormField
-                            control={form.control}
-                            name="pickupWindowStart"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Pickup Window Start</FormLabel>
-                                <FormControl>
-                                  <Input type="time" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="pickupWindowEnd"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Pickup Window End</FormLabel>
-                                <FormControl>
-                                  <Input type="time" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
+                {carrier.requiresOAuth && (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="clientId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Client ID</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter client ID" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
+                    />
 
-                      <FormField
-                        control={form.control}
-                        name="services"
-                        render={() => (
-                          <FormItem>
-                            <div className="mb-4">
-                              <FormLabel>Available Services</FormLabel>
-                              <FormDescription>
-                                Select which shipping services to enable
-                              </FormDescription>
-                            </div>
-                            <div className="grid gap-2">
-                              {availableServices[carrier.id].map((service) => (
-                                <FormField
+                    <FormField
+                      control={form.control}
+                      name="clientSecret"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Client Secret</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Enter client secret"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+
+                {!carrier.requiresOAuth && (
+                  <FormField
+                    control={form.control}
+                    name="apiKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>API Key</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Enter API key"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="accountNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Account Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter account number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cutoffTime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Shipping Cutoff Time</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="pickupEnabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Enable Automatic Pickup
+                        </FormLabel>
+                        <FormDescription>
+                          Schedule automatic daily pickups
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("pickupEnabled") && (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="pickupWindowStart"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pickup Window Start</FormLabel>
+                          <FormControl>
+                            <Input type="time" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="pickupWindowEnd"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pickup Window End</FormLabel>
+                          <FormControl>
+                            <Input type="time" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+
+                <FormField
+                  control={form.control}
+                  name="services"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel>Available Services</FormLabel>
+                        <FormDescription>
+                          Select which shipping services to enable
+                        </FormDescription>
+                      </div>
+                      <div className="grid gap-2">
+                        {availableServices[carrier.id].map((service) => (
+                          <FormField
+                            key={service.id}
+                            control={form.control}
+                            name="services"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
                                   key={service.id}
-                                  control={form.control}
-                                  name="services"
-                                  render={({ field }) => {
-                                    return (
-                                      <FormItem
-                                        key={service.id}
-                                        className="flex flex-row items-start space-x-3 space-y-0"
-                                      >
-                                        <FormControl>
-                                          <Checkbox
-                                            checked={field.value?.includes(
-                                              service.id
-                                            )}
-                                            onCheckedChange={(checked) => {
-                                              return checked
-                                                ? field.onChange([
-                                                    ...(field.value || []),
-                                                    service.id,
-                                                  ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) =>
-                                                        value !== service.id
-                                                    )
-                                                  );
-                                            }}
-                                          />
-                                        </FormControl>
-                                        <FormLabel className="font-normal">
-                                          {service.name}
-                                        </FormLabel>
-                                      </FormItem>
-                                    );
-                                  }}
-                                />
-                              ))}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(
+                                        service.id
+                                      )}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([
+                                              ...(field.value || []),
+                                              service.id,
+                                            ])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== service.id
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {service.name}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-                      <Button type="submit">Save Settings</Button>
-                    </form>
-                  </Form>
-                </Card>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+                <Button type="submit">Save Settings</Button>
+              </form>
+            </Form>
+          </Card>
+        ))}
       </div>
     </div>
   );
