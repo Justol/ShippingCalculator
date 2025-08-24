@@ -19,6 +19,7 @@ const packingDetailsSchema = z.object({
   boxSize: z.enum(["small", "medium", "large", "custom"]).optional(),
   packagingType: z.enum(["box", "bubble-mailer", "envelope"]).optional(),
   materials: z.array(z.string()).optional(),
+  complexity: z.enum(["regular", "fragile", "veryFragile", "custom"]).optional(),
 });
 
 export const packageDetailsSchema = z.object({

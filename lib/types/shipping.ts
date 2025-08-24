@@ -17,6 +17,7 @@ export interface PackingDetails {
   boxSize?: "small" | "medium" | "large" | "custom";
   packagingType?: "box" | "bubble-mailer" | "envelope";
   materials?: string[];
+  complexity?: "regular" | "fragile" | "veryFragile" | "custom";
 }
 
 export interface ShippingDetails {

@@ -40,7 +40,9 @@ const carrierFormSchema = z.object({
   services: z.array(z.string()),
 });
 
-const availableServices: Record<string, { id: string; name: string }[]> = {
+type CarrierId = "ups" | "fedex" | "usps" | "dhl";
+
+const availableServices: Record<CarrierId, { id: string; name: string }[]> = {
   ups: [
     { id: "ground", name: "Ground" },
     { id: "3day", name: "3-Day Select" },
@@ -66,7 +68,7 @@ const availableServices: Record<string, { id: string; name: string }[]> = {
 };
 
 export default function CarrierSettings() {
-  const carriers = [
+  const carriers: { id: CarrierId; name: string; logo: string; requiresOAuth: boolean }[] = [
     {
       id: "ups",
       name: "UPS",
@@ -107,7 +109,7 @@ export default function CarrierSettings() {
     services: [],
   };
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof carrierFormSchema>>({
     resolver: zodResolver(carrierFormSchema),
     defaultValues,
   });
@@ -369,14 +371,15 @@ export default function CarrierSettings() {
                                         service.id
                                       )}
                                       onCheckedChange={(checked) => {
+                                        const serviceId = service.id;
                                         return checked
                                           ? field.onChange([
                                               ...(field.value || []),
-                                              service.id,
+                                              serviceId,
                                             ])
                                           : field.onChange(
                                               field.value?.filter(
-                                                (value) => value !== service.id
+                                                (value) => value !== serviceId
                                               )
                                             );
                                       }}

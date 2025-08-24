@@ -84,10 +84,10 @@ export function calculateShippingOptions(
     details.receiver.zipCode
   );
   
-  const baseRate = calculateBaseRate(distance, details.package.weight, {
-    length: details.package.length,
-    width: details.package.width,
-    height: details.package.height,
+  const baseRate = calculateBaseRate(distance, parseFloat(details.package.weight) || 0, {
+    length: parseFloat(details.package.length) || 0,
+    width: parseFloat(details.package.width) || 0,
+    height: parseFloat(details.package.height) || 0,
   });
 
   const packingCost = calculatePackingCost(details);

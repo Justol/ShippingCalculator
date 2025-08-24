@@ -71,16 +71,8 @@ export default function PackageDetails({ onCalculate }: PackageDetailsProps) {
   const packingDetails = form.watch("packing");
 
   const onSubmit = (data: ShippingDetails) => {
-    const parsedData = {
-      ...data,
-      package: {
-        length: parseFloat(data.package.length as string) || 0,
-        width: parseFloat(data.package.width as string) || 0,
-        height: parseFloat(data.package.height as string) || 0,
-        weight: parseFloat(data.package.weight as string) || 0,
-      },
-    };
-    onCalculate(parsedData);
+    // Keep the data as strings since that's what the interface expects
+    onCalculate(data);
   };
 
   return (
@@ -376,7 +368,7 @@ export default function PackageDetails({ onCalculate }: PackageDetailsProps) {
                     <FormLabel>Packaging Complexity</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={field.value as string}
                     >
                       <FormControl>
                         <SelectTrigger>

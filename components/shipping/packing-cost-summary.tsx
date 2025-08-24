@@ -4,7 +4,7 @@ import { PackingDetails } from "@/lib/types/shipping";
 import { Card } from "@/components/ui/card";
 import { PackageIcon } from "lucide-react";
 
-const MATERIAL_COSTS = {
+const MATERIAL_COSTS: Record<string, { price: number; label: string }> = {
   "bubble-wrap": { price: 3, label: "Bubble Wrap" },
   "packing-peanuts": { price: 4, label: "Packing Peanuts" },
   foam: { price: 5, label: "Foam Padding" },
@@ -25,7 +25,7 @@ const PACKAGING_COSTS = {
   envelope: { price: 1, label: "Shipping Envelope" },
 };
 
-const LABOR_COSTS = {
+const LABOR_COSTS: Record<string, { price: number; label: string }> = {
   regular: { price: 0, label: "Regular Packaging" },
   fragile: { price: 50, label: "Fragile Items" },
   veryFragile: { price: 150, label: "Very Fragile Items" },
